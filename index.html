@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pebbles ❤️</title>
+  <link rel="icon" href="assets/logo.ico">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Nunito:wght@300;400;600;700&family=Caveat:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div id="bgLayer" aria-hidden="true"></div>
+  <div id="heartsLayer" aria-hidden="true"></div>
+  <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+
+  <!-- ═══════════════════════════════════════════════
+       BIRTHDAY OVERLAY — June 4 only
+       ═══════════════════════════════════════════════ -->
+  <div id="birthdayOverlay" style="display:none;">
+    <div class="special-card" id="birthdayCard" role="button" tabindex="0" aria-label="Flip card">
+      <div class="letter-face special-front">
+        <h1 class="bday-heading">Happy Birthday Ichaya ❤️</h1>
+        <p class="bday-message">I love you the most, May the Lord be with you always.</p>
+        <p class="flip-hint" aria-hidden="true">flip to see more ↻</p>
+      </div>
+      <div class="letter-face letter-back">
+        <p class="flip-back-hint" aria-hidden="true">↩ flip back</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="anniversaryOverlay" style="display:none;">
+    <div class="special-card" id="anniversaryCard" role="button" tabindex="0" aria-label="Flip card">
+      <div class="letter-face special-front">
+        <h1 class="bday-heading">Happy Anniversary Ichaya ❤️</h1>
+        <p class="bday-message">Here is to sharing one more year in love, faith, trust, respect and to growing more deeply in our relationship together with our Lord the Father.</p>
+        <p class="flip-hint" aria-hidden="true">flip to see more ↻</p>
+      </div>
+      <div class="letter-face letter-back">
+        <p class="flip-back-hint" aria-hidden="true">↩ flip back</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       MAIN APP
+       ═══════════════════════════════════════════════ -->
+  <div class="app" id="mainApp">
+
+    <!-- Time-of-day greeting -->
+    <p class="greeting" id="greeting"></p>
+
+    <!-- Scene: envelope + letter live here -->
+    <div class="scene" id="scene">
+
+      <!-- ── Envelope ─────────────────────────────── -->
+      <div class="envelope" id="envelope" role="button" tabindex="0"
+           aria-label="Open your letter">
+
+        <!-- Envelope body with inner fold lines -->
+        <div class="env-body">
+          <div class="env-fold env-fold-left"  aria-hidden="true"></div>
+          <div class="env-fold env-fold-right" aria-hidden="true"></div>
+          <div class="env-fold env-fold-bottom"aria-hidden="true"></div>
+        </div>
+
+        <!-- The flap — rotates open on click -->
+        <div class="env-flap" id="envFlap" aria-hidden="true">
+          <div class="env-flap-face"></div>
+          <!-- Wax seal sits on the flap so it "breaks" as it opens -->
+          <div class="env-seal" aria-hidden="true">❤</div>
+        </div>
+
+        <!-- Label printed on envelope front -->
+        <p class="env-to-label" aria-hidden="true">open with a smile ichaya</p>
+
+      </div><!-- /envelope -->
+
+      <!-- ── Letter card (rises out of the envelope) ── -->
+      <div class="letter-container" id="letterContainer">
+        <div class="letter" id="letterCard" role="button" tabindex="0"
+             aria-label="Flip the letter">
+
+          <!-- FRONT: the verse -->
+          <div class="letter-face letter-front" id="letterFront">
+            <div class="letter-ornament" aria-hidden="true">❤️</div>
+            <span class="verse-reference" id="verseReference">…</span>
+            <p class="verse-text" id="verseText">…</p>
+            <div class="ornament-divider" aria-hidden="true"><span> </span></div>
+            <p class="flip-hint" aria-hidden="true">flip to see more ↻</p>
+          </div>
+
+          <!-- BACK: postcard image, full bleed -->
+          <div class="letter-face letter-back" id="letterBack">
+            <p class="flip-back-hint" aria-hidden="true">↩ flip back</p>
+          </div>
+
+        </div><!-- /letter -->
+      </div><!-- /letter-container -->
+
+      <!-- Tap hint shown before envelope is opened -->
+      <p class="open-hint" id="openHint">tap to open ✉</p>
+
+    </div><!-- /scene -->
+
+  </div><!-- /mainApp -->
+
+  <!-- Animal sitting on the bottom-right edge -->
+  <img src="assets/animal.png" id="cornerAnimal" alt="" aria-hidden="true">
+
+  <script src="verses.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

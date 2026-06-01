@@ -1,0 +1,503 @@
+/* ============================================================
+   LOVEVERSE — styles.css
+   Theme: lavender / lilac
+   Layout: envelope → letter rises → card flips
+   ============================================================ */
+
+/* ── Tokens ───────────────────────────────────────────────── */
+:root {
+  --bg:            #F3EFFF;
+  --bg-deep:       #E8E0FF;
+  --card-bg:       #FDFBFF;
+  --accent:        #9B72CF;
+  --accent-light:  #DDD4F5;
+  --accent-dark:   #6B45A8;
+  --accent-pale:   #EDE5FF;
+  --gold:          #B89FE0;
+  --gold-light:    #EDE5FF;
+  --text-dark:     #1E1140;
+  --text-mid:      #4A3570;
+  --text-soft:     #8878A8;
+  --rose:          #C084E0;
+  --rose-light:    #F0E8FF;
+  --env-body:      #F8F4FF;
+  --env-flap:      #EBE0FF;
+  --env-fold:      rgba(155, 114, 207, 0.10);
+  --env-border:    rgba(155, 114, 207, 0.25);
+  --letter-bg:     #FFFCFE;
+  --font-display:  'Cormorant Garamond', 'Georgia', serif;
+  --font-body:     'Nunito', 'Segoe UI', sans-serif;
+  --font-script:   'Caveat', cursive;
+  --shadow-soft:   0 4px 24px rgba(30, 17, 64, 0.10), 0 1px 6px rgba(30, 17, 64, 0.06);
+  --shadow-card:   0 16px 56px rgba(30, 17, 64, 0.18), 0 4px 16px rgba(30, 17, 64, 0.10);
+  --radius:        16px;
+}
+
+/* ── Reset ────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: var(--font-body);
+  background-color: var(--bg);
+  color: var(--text-dark);
+  overflow: hidden;
+}
+
+/* ── Background ──────────────────────────────────────────── */
+#bgLayer {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 18% 8%,  rgba(184,159,224,0.40) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 85% 92%, rgba(192,132,224,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 50% at 50% 50%, rgba(155,114,207,0.10) 0%, transparent 70%),
+    linear-gradient(160deg, #F3EFFF 0%, #EBE3FF 45%, #E0D4FF 100%);
+}
+
+/* ── Floating hearts background ──────────────────────────── */
+#heartsLayer {
+  position: fixed; inset: 0; z-index: 2;
+  pointer-events: none; overflow: hidden;
+}
+
+.fheart {
+  position: absolute;
+  bottom: -40px;
+  font-size: 14px;
+  line-height: 1;
+  animation: floatUp linear infinite;
+  will-change: transform, opacity;
+}
+
+.fheart::before {
+  content: '❤';
+  display: block;
+}
+
+@keyframes floatUp {
+  0%   { transform: translateY(0)      translateX(0)    rotate(0deg);  opacity: 0; }
+  8%   { opacity: 1; }
+  50%  { transform: translateY(-50vh)  translateX(18px) rotate(8deg); }
+  92%  { opacity: 0.5; }
+  100% { transform: translateY(-105vh) translateX(-8px) rotate(-5deg); opacity: 0; }
+}
+
+#confettiCanvas {
+  position: fixed; inset: 0; z-index: 5;
+  pointer-events: none; display: none;
+}
+
+/* ── App shell ───────────────────────────────────────────── */
+.app {
+  position: relative;
+  z-index: 10;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 16px 20px;
+  gap: 0;
+  animation: fadeUp 0.7s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Greeting ────────────────────────────────────────────── */
+.greeting {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 5.5vw, 2.4rem);
+  font-style: italic;
+  font-weight: 600;
+  color: var(--text-mid);
+  letter-spacing: 0.02em;
+  text-align: center;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+  animation: fadeUp 0.9s ease both 0.15s;
+}
+
+.greeting span {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ── Scene ───────────────────────────────────────────────── */
+.scene {
+  position: relative;
+  flex: 1;           /* fills all space between header padding and bottom padding */
+  width: 100%;
+  max-width: 480px;
+  /* both children are absolute — scene is purely a positioned container */
+}
+
+/* ── ENVELOPE ────────────────────────────────────────────── */
+.envelope {
+  /* Centered within the scene */
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width:  min(440px, 90vw);
+  height: min(278px, 57vw);
+  cursor: pointer;
+  perspective: 900px;
+
+  transition: opacity 0.55s ease 0.3s, transform 0.55s ease 0.3s;
+}
+.envelope:hover:not(.opened) {
+  transform: translate(-50%, calc(-50% - 5px)) rotate(-1deg);
+  filter: drop-shadow(0 12px 28px rgba(107,69,168,0.22));
+}
+.envelope.opened {
+  opacity: 0;
+  transform: translate(-50%, calc(-50% + 16px)) scale(0.93);
+  pointer-events: none;
+}
+
+/* Envelope body — the rectangle */
+.env-body {
+  position: absolute; inset: 0;
+  background: var(--env-body);
+  border-radius: 5px 5px 10px 10px;
+  border: 1px solid var(--env-border);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+/* Inner decorative fold lines */
+.env-fold {
+  position: absolute;
+  pointer-events: none;
+}
+.env-fold-left {
+  top: 0; left: 0;
+  width: 51%; height: 52%;
+  background: var(--env-fold);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+.env-fold-right {
+  top: 0; right: 0;
+  width: 51%; height: 52%;
+  background: var(--env-fold);
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+.env-fold-bottom {
+  bottom: 0; left: 0; right: 0;
+  height: 55%;
+  background: rgba(155,114,207,0.06);
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+}
+
+/* The flap — folds open with rotateX */
+.env-flap {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 52%;
+  transform-origin: top center;
+  transform: rotateX(0deg);
+  transition: transform 0.72s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 3;
+}
+
+/* Flap face */
+.env-flap-face {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, var(--env-flap) 0%, rgba(221,212,245,0.75) 100%);
+  border-radius: 5px 5px 0 0;
+  border: 1px solid var(--env-border);
+  border-bottom: none;
+  /* Triangle clipped at bottom so it looks like an envelope flap */
+  clip-path: polygon(0 0, 100% 0, 50% 78%);
+}
+
+/* Wax seal — on the flap, disappears as it opens */
+.env-seal {
+  position: absolute;
+  bottom: 16%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 8px rgba(107,69,168,0.35);
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* Open state: flap folds back (behind body) */
+.envelope.opened .env-flap {
+  transform: rotateX(-180deg);
+  z-index: 0;
+}
+
+/* "a letter for you" label on envelope front */
+.env-to-label {
+  position: absolute;
+  bottom: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-script);
+  font-size: clamp(0.9rem, 2.2vw, 1.1rem);
+  font-weight: 500;
+  color: var(--text-soft);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 2;
+  letter-spacing: 0.02em;
+}
+
+/* ── LETTER CONTAINER & 3-D FLIP ─────────────────────────── */
+.letter-container {
+  /* Same center as the envelope — hidden until opened */
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, calc(-50% + 22px));
+  width: min(520px, 92vw);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity   0.50s ease 0.50s,
+    transform 0.55s cubic-bezier(0.23, 1, 0.32, 1) 0.48s;
+}
+
+.letter-container.risen {
+  transform: translate(-50%, -50%);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* The 3-D flip wrapper */
+.letter {
+  width: 100%;
+  height: min(320px, 68vw);
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 1100px;
+  cursor: pointer;
+  transition: transform 0.72s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.letter.flipped {
+  transform: rotateY(180deg);
+}
+
+/* Both faces */
+.letter-face {
+  position: absolute; inset: 0;
+  border-radius: var(--radius);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+/* ── Letter front (verse) ────────────────────────────────── */
+.letter-front {
+  background: var(--letter-bg);
+  /* Subtle ruled-paper lines */
+  background-image:
+    linear-gradient(transparent calc(2.2rem - 1px), rgba(155,114,207,0.10) calc(2.2rem - 1px)),
+    linear-gradient(var(--letter-bg), var(--letter-bg));
+  background-size: 100% 2.2rem, 100% 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 28px 30px 20px;
+  /* Thin coloured left margin rule */
+  border-left: 3px solid rgba(155,114,207,0.18);
+}
+
+/* Small ornament at top of letter */
+.letter-ornament {
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  margin-bottom: 2px;
+}
+
+.verse-reference {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: linear-gradient(90deg, var(--accent-pale), var(--gold-light), var(--accent-pale));
+  padding: 3px 14px;
+  border-radius: 20px;
+}
+
+.verse-text {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2.8vw, 1.35rem);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--text-dark);
+  text-align: center;
+  quotes: '\201C' '\201D';
+}
+.verse-text::before { content: open-quote; }
+.verse-text::after  { content: close-quote; }
+
+/* Shared ornament divider */
+.ornament-divider {
+  display: flex; align-items: center; gap: 10px;
+  margin: 2px auto;
+  max-width: 160px;
+  width: 100%;
+}
+.ornament-divider::before,
+.ornament-divider::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-light));
+}
+.ornament-divider::after {
+  background: linear-gradient(90deg, var(--accent-light), transparent);
+}
+.ornament-divider span {
+  color: var(--gold); font-size: 0.85rem; line-height: 1;
+}
+
+/* "flip to see more" nudge at bottom of front */
+.flip-hint {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-soft);
+  margin-top: 4px;
+  animation: pulse 2.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}
+
+/* ── Letter back (postcard image, full bleed) ────────────── */
+.letter-back {
+  transform: rotateY(180deg);
+  background: url('assets/Postcard.png') center center / contain no-repeat;
+  background-color: #1A0F38; /* fallback if image hasn't loaded */
+}
+
+/* "flip back" nudge */
+.flip-back-hint {
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(184,159,224,0.55);
+  text-align: center;
+  padding-bottom: 8px;
+  animation: pulse 2.8s ease-in-out infinite;
+}
+
+/* ── Open hint ───────────────────────────────────────────── */
+.open-hint {
+  position: absolute;
+  /* sits just below the vertically-centered envelope */
+  top: calc(50% + min(154px, 29vw) + 18px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  color: var(--text-soft);
+  white-space: nowrap;
+  transition: opacity 0.4s ease;
+  animation: pulse 2.5s ease-in-out infinite;
+}
+.open-hint.hidden { opacity: 0; pointer-events: none; }
+
+/* ── Special day card (birthday & anniversary flip card) ─── */
+.special-card {
+  width: min(520px, 92vw);
+  height: min(320px, 68vw);
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 1100px;
+  cursor: pointer;
+  transition: transform 0.72s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.special-card.flipped {
+  transform: rotateY(180deg);
+}
+.special-front {
+  background: rgba(253,251,255,0.96);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 32px 28px 20px;
+  text-align: center;
+}
+
+/* ── Birthday overlay ────────────────────────────────────── */
+#birthdayOverlay, #anniversaryOverlay {
+  position: fixed; inset: 0; z-index: 20;
+  background: linear-gradient(160deg, #F0EBFF 0%, #E8DEFF 40%, #DDD4FF 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px 20px;
+  animation: fadeUp 1s ease both;
+}
+.bday-heading {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 8vw, 3.4rem);
+  font-weight: 500;
+  font-style: italic;
+  color: var(--accent-dark);
+  text-align: center;
+  line-height: 1.2;
+}
+.bday-message {
+  font-family: var(--font-script);
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
+  font-weight: 500;
+  color: var(--text-mid);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-height: 640px) {
+  .scene { flex: 1; }
+}
+@media (max-width: 400px) {
+  .letter-front { padding: 22px 18px 16px; }
+  .back-text-area { padding: 10px 16px 6px; }
+}
+
+/* ── Corner animal ───────────────────────────────────────── */
+#cornerAnimal {
+  position: fixed;
+  bottom: -15px;      /* sits just below the bottom edge */
+  right: 12px;
+  height: 110px;
+  width: auto;
+  z-index: 15;
+  pointer-events: none;
+  filter: drop-shadow(-2px -3px 6px rgba(107, 69, 168, 0.18));
+  animation: animalSettle 0.6s cubic-bezier(0.23, 1, 0.32, 1) both 0.4s;
+}
+
+@keyframes animalSettle {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--accent-light); border-radius: 3px; }

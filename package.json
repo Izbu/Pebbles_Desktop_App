@@ -1,0 +1,48 @@
+{
+  "name": "loveverse",
+  "version": "1.0.0",
+  "description": "A daily verse and love note app — for Pebbles ❤️",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win"
+  },
+  "keywords": [],
+  "author": "Isa",
+  "license": "UNLICENSED",
+  "private": true,
+  "devDependencies": {
+    "electron": "^29.4.6",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.isa.loveverse",
+    "productName": "Pebbles",
+    "copyright": "Made with love by Isa",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/.cache/**",
+      "!dist/**",
+      "!*.md"
+    ],
+    "win": {
+      "icon": "assets/logo.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Pebbles"
+    }
+  }
+}
